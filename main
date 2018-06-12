@@ -1,0 +1,84 @@
+#include <iostream> // flux d'entree-sortie
+#include <cmath> // inclu fct mathematique
+#include <string> // specifique a l'affichage
+#include <fstream> // biblioteque des inputs outputs pour fichier
+#include <iomanip> // nombre apres virgule  	<< fixed << setprecision (45) <<
+#include <vector>
+#include <sstream> // gen string
+
+#include "Cluster.h"
+#include "LibraryCluster.h"
+
+using namespace std;
+
+string const FICHIER("Fichier/test.txt");
+
+const unsigned short int N1 = 256 ;
+const double N2 = 0.000000025 ;
+const double N3 = 0.0000000015625 ;
+const unsigned short int MANTISSE = 12 ;
+
+int main()
+{
+    unsigned short int coordinates(0), tot(0);
+	double	toaCoarse(0), toaFine(0);
+
+	unsigned short int x(0), y(0);
+	double timeStamp(0);
+
+	ifstream flux(FICHIER.c_str());
+	string ligne("file not found");
+	char commentaire('.');
+
+	Cluster currentCluster(true);
+    LibraryCluster libraryForCluster;
+
+	if(flux)
+	{
+        while (getline(flux,ligne))
+		{
+		    flux.get(commentaire);
+            flux.putback(commentaire);
+            if (commentaire!='#')
+            {
+				// recover
+				flux >> coordinates ;
+				flux >> toaCoarse ;
+				flux >> toaFine ;
+				flux >> tot ;
+
+				// calculate
+				x = coordinates%N1 ;
+				y = coordinates/N1 ;
+				timeStamp = (toaCoarse*N2)-(toaFine*N3) ;
+
+                if (currentCluster.getFirst()==true)
+                {
+                    currentCluster.setFirst(false);
+                    currentCluster.setTimeStamp(timeStamp);
+                    currentCluster.setX(x);
+                    currentCluster.setY(y);
+                    currentCluster.setTot(tot);
+                    currentCluster.setHighest(timeStamp+N2);
+                    currentCluster.setLowest(timeStamp-N2);
+                }
+                else if ((currentCluster.getLowest() <= timeStamp) & (currentCluster.getHighest() >= timeStamp))
+                {
+                    currentCluster.setTimeStamp(timeStamp);
+                    currentCluster.setX(x);
+                    currentCluster.setY(y);
+                    currentCluster.setTot(tot);
+                    currentCluster.setHighest(timeStamp+N2);
+                    currentCluster.setLowest(timeStamp-N2);
+                }
+                else
+                {
+                    libraryForCluster.addCluster(currentCluster);
+                    currentCluster = new Cluster(true, timeStamp + N2, timeStamp - N2, timeStamp, x, y, tot);
+                }
+            }
+		}
+    }
+	else { cout << "ERREUR 01 = file not found" << endl;}
+	return 0;
+}
