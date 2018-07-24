@@ -2,6 +2,7 @@
 #define LIBRARYCLUSTER_H_INCLUDED
 
 #include <list>
+#include <vector>
 #include "Cluster.h"
 
 class LibraryCluster
@@ -11,16 +12,21 @@ class LibraryCluster
     LibraryCluster();
     ~LibraryCluster();
 
-    void displayAllCluster() const;
+    void displayAllCluster();
+    void fusionDuTurfu();
+    void AnalyzerDuTurfu();
 
     //getter
-    int getNbrCluster() const ;
+    int getNbrCluster() const;
 
     //setter
     void addCluster(Cluster new_Cluster);
 
     private:
-    std::list<Cluster>  m_list_Cluster ;
+    std::vector<int>                 m_vect_Size;
+    std::list<Cluster>               m_list_Cluster ;
+    std::list<Cluster>::iterator     it;
+    std::list<Cluster>::iterator     compIt;
 
 };
 
