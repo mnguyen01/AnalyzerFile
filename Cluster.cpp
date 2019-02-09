@@ -16,6 +16,7 @@ Cluster::Cluster(bool first) {
  m_dbl_Highest_TS = 0 ;
  m_int_Highest_X = 0 ;
  m_int_Highest_Y = 0 ;
+ m_int_Highest_YAZS = 1;
 }
 
 //constructeur 2
